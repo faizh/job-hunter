@@ -49,7 +49,7 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li class="dropdown"><a href="#"><span>Username</span> <i class="bi bi-chevron-down"></i></a>
+          <li class="dropdown"><a href="#"><span>{{auth()->user()->name}}</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               <li><a href="#" class="text-danger">Logout</a></li>
             </ul>
