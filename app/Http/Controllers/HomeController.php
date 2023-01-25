@@ -26,9 +26,23 @@ class HomeController extends Controller
     
     public function getJobs(Request $request)
     {
+        $description    = $request->input('description');
+        $location       = $request->input('location');
+        $type           = $request->input('type');
+
+        $description_filter = '';
+        if ($description != '') {
+            $description_filter = '&description='.$description;
+        }
+
+        $location_filter = '';
+        if ($location != '') {
+            $location_filter = '&location='.$location;
+        }
+
         $page_requested = $request->input('page_no');
         $api            = env('DANS_API_URL');
-        $paginated_api  = $api."?page=".$page_requested;
+        $paginated_api  = $api."?page=".$page_requested."".$description_filter."".$location_filter;
         $data_jobs      = json_decode(file_get_contents($paginated_api));
 
         $jobs = '

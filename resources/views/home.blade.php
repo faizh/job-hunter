@@ -98,6 +98,20 @@
               <p>
                 Quisquam vel ut sint cum eos hic dolores aperiam. Sed deserunt et. Inventore et et dolor consequatur itaque ut voluptate sed et. Magnam nam ipsum tenetur suscipit voluptatum nam et est corrupti.
               </p>
+
+              <div class="row">
+                <div class="input-group mb-3 col-4">
+                    <input type="text" class="form-control col-md-2 m-1" placeholder="Java / Ruby" aria-label="description" name="description" aria-describedby="basic-addon1" onchange="filterJobs()" id="filter-description">
+                    <input type="text" class="form-control col-md-2 m-1" placeholder="City Name / Zip Code" aria-label="Location" aria-describedby="basic-addon1" onchange="filterJobs()" id="filter-location">
+                    <select class="form-control col-md-2 m-1" id="filter-type" onchange="filterJobs()" >
+                        <option disabled value="" selected>Type</option>
+                        <option value="full-time">Full Time</option>
+                        <option value="part-time">Part Time</option>
+                      </select>
+                </div>
+              </div>
+              
+
               <div class="row" id="jobs">
                 @foreach ($jobs as $inc => $job)
                     <div class="col-sm-6 mb-3">
@@ -169,6 +183,9 @@
 
   <script>
     var thisPage = 1;
+    var desc     = "";
+    var locations = "";
+    var type = "";
 
     $.ajaxSetup({
         headers: {
@@ -191,6 +208,13 @@
         getJobs();
     }
 
+    function filterJobs(){
+        desc        = document.getElementById("filter-description").value;
+        locations    = document.getElementById("filter-location").value;
+        type        = document.getElementById("filter-type").value;
+        getJobs();
+    }
+
     function getJobs() {
         if (thisPage < 1){
             thisPage = 1;
@@ -204,6 +228,9 @@
             url: "{{ route('ajaxGetJobs') }}",
             data:{
                     page_no : thisPage,
+                    description : desc,
+                    location : locations,
+                    type : type
             },
             success: function(data) {
                 $('#jobs').html(data);
