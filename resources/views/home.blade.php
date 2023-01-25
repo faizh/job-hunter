@@ -70,7 +70,7 @@
           <h2 data-aos="fade-up" data-aos-delay="400">All of the job posted around the world are posted in here</h2>
           <div data-aos="fade-up" data-aos-delay="600">
             <div class="text-center text-lg-start">
-              <a href="#about" class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
+              <a href="#job" class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
                 <span>Get Started</span>
                 <i class="bi bi-arrow-right"></i>
               </a>
@@ -86,25 +86,46 @@
   </section><!-- End Hero -->
 
   <main id="main">
-    <!-- ======= About Section ======= -->
-    <section id="about" class="about">
+    <section id="job" class="about">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
       <div class="container" data-aos="fade-up">
         <div class="row gx-0">
 
-          <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-lg-12 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="content">
-              <h3>Who We Are</h3>
-              <h2>Expedita voluptas omnis cupiditate totam eveniet nobis sint iste. Dolores est repellat corrupti reprehenderit.</h2>
+              <h2>Find Your Job!</h2>
               <p>
                 Quisquam vel ut sint cum eos hic dolores aperiam. Sed deserunt et. Inventore et et dolor consequatur itaque ut voluptate sed et. Magnam nam ipsum tenetur suscipit voluptatum nam et est corrupti.
               </p>
-              <div class="text-center text-lg-start">
-                <a href="#" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
-                  <span>Read More</span>
-                  <i class="bi bi-arrow-right"></i>
-                </a>
+              <div class="row" id="jobs">
+                @foreach ($jobs as $inc => $job)
+                    <div class="col-sm-6 mb-3">
+                        <div class="card">
+                        <div class="card-body">
+                            <h2>{{ $job->title }}</h2>
+                            <h6 class="card-title">{{ $job->company }}</h6>
+                            <h6 class="card-title">{{ $job->location }} - {{ $job->type }}</h6>
+                            {{-- <p class="card-text">{{ substr($myStr, 0, 5)}}</p> --}}
+                            <a href="#" class="btn btn-primary btn-sm"> Details </a>
+                        </div>
+                        </div>
+                    </div>
+                @endforeach
               </div>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item">
+                    <a class="page-link" onclick="previous()" href="#job">Previous</a>
+                  </li>
+                  @for ($i = 1; $i <= $total_page; $i++)
+                    <li class="page-item"><a class="page-link" href="#job" onclick="page({{$i}})">{{$i}}</a></li>
+                  @endfor
+                  <li class="page-item">
+                    <a class="page-link" onclick="next()" href="#job">Next</a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
 
@@ -141,9 +162,55 @@
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+  <script>
+    var thisPage = 1;
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    function next(){
+        thisPage++;
+        getJobs();
+    }
+
+    function previous(){
+        thisPage--;
+        getJobs();
+    }
+
+    function page(pageNumber){
+        thisPage = pageNumber;
+        getJobs();
+    }
+
+    function getJobs() {
+        if (thisPage < 1){
+            thisPage = 1;
+        }
+
+        if (thisPage > {{ $total_page }}) {
+            thisPage = {{ $total_page }};
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('ajaxGetJobs') }}",
+            data:{
+                    page_no : thisPage,
+            },
+            success: function(data) {
+                $('#jobs').html(data);
+            },
+        });
+    }
+  </script>
 
 </body>
 

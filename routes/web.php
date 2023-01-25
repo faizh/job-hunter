@@ -24,3 +24,4 @@ Route::post('/login', [AuthController::class, 'actLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::post('/getJobs', [HomeController::class, 'getJobs'])->name('ajaxGetJobs')->middleware('auth');
